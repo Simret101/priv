@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: services-service2
+  labels:
+    app: services-service2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: services-service2
+  template:
+    metadata:
+      labels:
+        app: services-service2
+    spec:
+      containers:
+      - name: services-service2
+        image: simret101/services_service2:latest
+        ports:
+        - containerPort: 8082
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8082
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: services-service2
+spec:
+  selector:
+    app: services-service2
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8082
+  type: ClusterIP
